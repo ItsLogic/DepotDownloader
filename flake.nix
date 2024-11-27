@@ -13,7 +13,7 @@
       {
         devShells.default = pkgs.mkShell {
           packages = [
-            pkgs.dotnet-runtime_8
+            pkgs.dotnetCorePackages.dotnet_9.runtime
           ];
         };
       }
