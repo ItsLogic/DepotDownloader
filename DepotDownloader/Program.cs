@@ -209,6 +209,7 @@ namespace DepotDownloader
 
                 var branch = GetParameter<string>(args, "-branch") ?? GetParameter<string>(args, "-beta") ?? ContentDownloader.DEFAULT_BRANCH;
                 ContentDownloader.Config.BetaPassword = GetParameter<string>(args, "-betapassword");
+                ContentDownloader.Config.EncryptedGID = GetParameter<string>(args, "-gid");
 
                 ContentDownloader.Config.DownloadAllPlatforms = HasParameter(args, "-all-platforms");
 
@@ -435,6 +436,9 @@ namespace DepotDownloader
             Console.WriteLine("  -max-servers <#>         - maximum number of content servers to use. (default: 20).");
             Console.WriteLine("  -max-downloads <#>       - maximum number of chunks to download concurrently. (default: 8).");
             Console.WriteLine("  -loginid <#>             - a unique 32-bit integer Steam LogonID in decimal, required if running multiple instances of DepotDownloader concurrently.");
+            Console.WriteLine();
+            Console.WriteLine("Extra options:");
+            Console.WriteLine("  -gid <GID>               - the encrypted GID of the manifest you want to download.");
         }
 
         static void PrintVersion(bool printExtra = false)

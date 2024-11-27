@@ -20,6 +20,7 @@ namespace DepotDownloader
         public List<Regex> FilesToDownloadRegex { get; set; }
 
         public string BetaPassword { get; set; }
+        public string EncryptedGID { get; set; }
 
         public bool VerifyAll { get; set; }
 

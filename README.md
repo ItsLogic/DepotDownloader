@@ -88,6 +88,8 @@ Parameter               | Description
 `-max-servers <#>`		| maximum number of content servers to use. (default: 20).
 `-max-downloads <#>`	| maximum number of chunks to download concurrently. (default: 8).
 `-loginid <#>`			| a unique 32-bit integer Steam LogonID in decimal, required if running multiple instances of DepotDownloader concurrently.
+-gid \<GID>             | the encrypted GID of the manifest you want to download.
+
 `-V` or `--version`     | print version and runtime
 
 ## Frequently Asked Questions

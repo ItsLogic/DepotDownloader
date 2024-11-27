@@ -236,7 +236,15 @@ namespace DepotDownloader
                         Config.BetaPassword = password = Console.ReadLine();
                     }
 
-                    var encrypted_gid = node_encrypted["gid"];
+                    var encrypted_gid = new KeyValue();
+                    if (Config.EncryptedGID != null)
+                    {
+                        encrypted_gid.Value = Config.EncryptedGID;
+                    }
+                    else
+                    {
+                        encrypted_gid = node_encrypted["gid"];
+                    }
 
                     if (encrypted_gid != KeyValue.Invalid)
                     {
@@ -568,9 +576,11 @@ namespace DepotDownloader
                 manifestId = await GetSteam3DepotManifest(depotId, appId, branch);
                 if (manifestId == INVALID_MANIFEST_ID && !string.Equals(branch, DEFAULT_BRANCH, StringComparison.OrdinalIgnoreCase))
                 {
-                    Console.WriteLine("Warning: Depot {0} does not have branch named \"{1}\". Trying {2} branch.", depotId, branch, DEFAULT_BRANCH);
-                    branch = DEFAULT_BRANCH;
-                    manifestId = await GetSteam3DepotManifest(depotId, appId, branch);
+                    //this code used to fall back to the default branch but I dont like that behaviour so im gettting rid of it
+                    Console.WriteLine("Warning: Depot {0} does not have branch named \"{1}\" or the GID {2} was incorrect", depotId, branch, Config.EncryptedGID);
+                    //branch = DEFAULT_BRANCH;
+                    //manifestId = GetSteam3DepotManifest(depotId, appId, branch);
+                    return null;
                 }
 
                 if (manifestId == INVALID_MANIFEST_ID)
