@@ -118,3 +118,5 @@ cryptopp/
 
 # misc
 Thumbs.db
+.idea/
+.direnv/
