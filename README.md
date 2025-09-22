@@ -103,6 +103,11 @@ Parameter               | Description
 `-max-downloads <#>`    | maximum number of chunks to download concurrently. (default: 8).
 `-use-lancache`         | forces downloads over the local network via a Lancache instance.
 
+#### Extras
+Parameter               | Description
+----------------------- | -----------
+`-gid <GID> `           | the encrypted GID of the manifest you want to download.
+
 #### Other
 
 Parameter               | Description

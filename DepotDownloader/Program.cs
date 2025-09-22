@@ -248,6 +248,7 @@ namespace DepotDownloader
 
                 var branch = GetParameter<string>(args, "-branch") ?? GetParameter<string>(args, "-beta") ?? ContentDownloader.DEFAULT_BRANCH;
                 ContentDownloader.Config.BetaPassword = GetParameter<string>(args, "-branchpassword") ?? GetParameter<string>(args, "-betapassword");
+                ContentDownloader.Config.EncryptedGID = GetParameter<string>(args, "-gid");
 
                 if (!string.IsNullOrEmpty(ContentDownloader.Config.BetaPassword) && string.IsNullOrEmpty(branch))
                 {
@@ -532,6 +533,9 @@ namespace DepotDownloader
             Console.WriteLine();
             Console.WriteLine("  -debug                   - enable verbose debug logging.");
             Console.WriteLine("  -V or --version          - print version and runtime.");
+            Console.WriteLine();
+            Console.WriteLine("Extra options:");
+            Console.WriteLine("  -gid <GID>               - the encrypted GID of the manifest you want to download.");
         }
 
         static void PrintVersion(bool printExtra = false)

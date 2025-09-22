@@ -268,21 +268,51 @@ namespace DepotDownloader
             // TODO: We're probably repeating this request for every depot?
             var privateDepotSection = await steam3.GetPrivateBetaDepotSection(appId, branch);
 
-            // Now repeat the same code to get the manifest gid from depot section
-            depotChild = privateDepotSection[depotId.ToString()];
+            if (Config.EncryptedGID != null)
+            {
+                Console.WriteLine($"Attempting to decrypt GID: {Config.EncryptedGID}");
+                // Submit the password to Steam now to get encryption keys
+                await steam3.CheckAppBetaPassword(appId, Config.BetaPassword);
 
-            if (depotChild == KeyValue.Invalid)
-                return INVALID_MANIFEST_ID;
+                if (!steam3.AppBetaPasswords.TryGetValue(branch, out var appBetaPassword))
+                {
+                    Console.WriteLine("Password was invalid for branch {0}", branch);
+                    return INVALID_MANIFEST_ID;
+                }
 
-            manifests = depotChild["manifests"];
+                var input = Util.DecodeHexString(Config.EncryptedGID);
+                byte[] manifest_bytes;
+                try
+                {
+                    manifest_bytes = Util.SymmetricDecryptECB(input, appBetaPassword);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine("Failed to decrypt branch {0}: {1}", branch, e.Message);
+                    return INVALID_MANIFEST_ID;
+                }
+                Console.WriteLine($"Sucessfully decrypted {Config.EncryptedGID} to Manifest ID: {BitConverter.ToUInt64(manifest_bytes, 0)}");
+                return BitConverter.ToUInt64(manifest_bytes, 0);
+            }
+            else
+            {
+                // Now repeat the same code to get the manifest gid from depot section
+                depotChild = privateDepotSection[depotId.ToString()];
 
-            if (manifests.Children.Count == 0)
-                return INVALID_MANIFEST_ID;
+                if (depotChild == KeyValue.Invalid)
+                    return INVALID_MANIFEST_ID;
 
-            node = manifests[branch]["gid"];
+                manifests = depotChild["manifests"];
 
-            if (node.Value == null)
-                return INVALID_MANIFEST_ID;
+                if (manifests.Children.Count == 0)
+                    return INVALID_MANIFEST_ID;
+
+                node = manifests[branch]["gid"];
+
+
+                if (node.Value == null)
+                    return INVALID_MANIFEST_ID;
+            }
 
             return ulong.Parse(node.Value);
         }
@@ -574,9 +604,11 @@ namespace DepotDownloader
                 manifestId = await GetSteam3DepotManifest(depotId, appId, branch);
                 if (manifestId == INVALID_MANIFEST_ID && !string.Equals(branch, DEFAULT_BRANCH, StringComparison.OrdinalIgnoreCase))
                 {
-                    Console.WriteLine("Warning: Depot {0} does not have branch named \"{1}\". Trying {2} branch.", depotId, branch, DEFAULT_BRANCH);
-                    branch = DEFAULT_BRANCH;
-                    manifestId = await GetSteam3DepotManifest(depotId, appId, branch);
+                    //this code used to fall back to the default branch but I dont like that behaviour so im gettting rid of it
+                    Console.WriteLine("Warning: Depot {0} does not have branch named \"{1}\" or the GID {2} was incorrect", depotId, branch, Config.EncryptedGID);
+                    //branch = DEFAULT_BRANCH;
+                    //manifestId = GetSteam3DepotManifest(depotId, appId, branch);
+                    return null;
                 }
 
                 if (manifestId == INVALID_MANIFEST_ID)
