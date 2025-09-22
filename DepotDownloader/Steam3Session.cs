@@ -244,7 +244,7 @@ namespace DepotDownloader
 
             var depotKey = await steamApps.GetDepotDecryptionKey(depotId, appid);
 
-            Console.WriteLine("Got depot key for {0} result: {1}", depotKey.DepotID, BitConverter.ToString(depotKey.DepotKey).Replace("-",""));
+            Console.WriteLine("Got depot key for {0} result: {1}", depotKey.DepotID, BitConverter.ToString(depotKey.DepotKey).Replace("-", ""));
 
             if (depotKey.Result != EResult.OK)
             {
